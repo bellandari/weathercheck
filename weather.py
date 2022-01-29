@@ -1,5 +1,4 @@
 import requests
-from uszipcode import SearchEngine
 import os
 import sys
 import key
@@ -14,10 +13,10 @@ def weathercheck():
     password = key.keycode
     
     # Asks user for Zipcode of US Location
-    zipcode = input("\nWeathercheck - Enter the Zipcode: ")
+    city = input("\nEnter the City:  ")
     
     # Response from API
-    response = requests.get(f"http://api.openweathermap.org/data/2.5/forecast?zip={zipcode}&units=imperial&appid={password}")
+    response = requests.get(f"http://api.openweathermap.org/data/2.5/forecast?q={city}&units=imperial&appid={password}")
 
     # Dictionary for responses
     temp = round(response.json()['list'][0]['main']['temp'])
@@ -27,14 +26,9 @@ def weathercheck():
     description = response.json()['list'][0]['weather'][0]['description']
     degree_sign = u"\N{DEGREE SIGN}"
 
-    # Zipcode Search Engine
-    engine = SearchEngine()
-    
-    # Searches by Zipcode
-    zipsearch = engine.by_zipcode(zipcode)
-
     # Output formatting
-    print (f"\n     City: {zipsearch.major_city} \
+    print (f"\
+        \n     City: {city} \
         \n     Temperature: {temp}{degree_sign}F \
         \n     Feels Like: {feelslike}{degree_sign}F \
         \n     Humidity: {humidity}% \
