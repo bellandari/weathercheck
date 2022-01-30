@@ -1,1 +1,9 @@
 key.py
+build
+dist
+weather.spec
+poetry.lock
+pyproject.toml
+.dist
+__pycache__
+
