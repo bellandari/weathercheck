@@ -2,47 +2,42 @@ import requests
 import os
 import sys
 import key
+import click
 
-# Clears the console due to an lack-of-library error I don't feel like installing
-os.system('cls||clear')
+#os.system('cls || clear')
 
-# Main Function
-def weathercheck():
+#class weathercheck:
+        
+@click.command()
+@click.option("--city", "-c", prompt = True)
+
+def weather(city):
     
     # Pulls API Key from hidden file
     password = key.keycode
     
-    # Asks user for Zipcode of US Location
-    city = input("\nEnter the City:  ")
+    # Asks user for name of city 
     
     # Response from API
     response = requests.get(f"http://api.openweathermap.org/data/2.5/forecast?q={city}&units=imperial&appid={password}")
-
-    # Dictionary for responses
-    temp = round(response.json()['list'][0]['main']['temp'])
-    feelslike = round(response.json()['list'][0]['main']['feels_like'])
-    humidity = response.json()['list'][0]['main']['humidity']
-    weather = response.json()['list'][0]['weather'][0]['main']
-    description = response.json()['list'][0]['weather'][0]['description']
-    degree_sign = u"\N{DEGREE SIGN}"
-
-    # Output formatting
-    print (f"\
-        \n     City: {city} \
-        \n     Temperature: {temp}{degree_sign}F \
-        \n     Feels Like: {feelslike}{degree_sign}F \
-        \n     Humidity: {humidity}% \
-        \n     Weather: {weather} \
-        \n     Info: {description}\n")
     
-    # Acts as a "While True" loop to prevent program from shutting down before results are read.
-    choice = input("Check again? Y/N: ")
-                   
-    if choice == 'y':
-        os.system('cls||clear')
-        weathercheck()
+    # Handles error if typo in city
+    if response.json()['cod'] == "404":
         
-    else:
-        sys.exit()
+        click.echo ("Was there a typo? Try again!")
+        
+        weather()
+        
+    else: 
+        
+        # Dictionary for responses
+        temp = round(response.json()['list'][0]['main']['temp'])
+        feelslike = round(response.json()['list'][0]['main']['feels_like'])
+        humidity = response.json()['list'][0]['main']['humidity']
+        weather = response.json()['list'][0]['weather'][0]['main']
+        info = response.json()['list'][0]['weather'][0]['description']
+        degree_sign = u"\N{DEGREE SIGN}"
 
-weathercheck()
+        click.echo (f"\nIt is currently {temp}{degree_sign}F in {city} with {info}. It feels like {feelslike}{degree_sign}F, with a humidity of {humidity}%. \n")
+
+weather()
